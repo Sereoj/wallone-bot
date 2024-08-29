@@ -13,6 +13,13 @@ class User extends Authenticatable
     use HasFactory;
 
     protected $fillable = [
+        'firstName',
+        'lastName',
+        'telegram_id',
+        'telegraph_chat_id',
+        'access_token',
+        'language_code',
+        'target',
     ];
 
     public function chat()
