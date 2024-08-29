@@ -2,23 +2,26 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use DefStudio\Telegraph\Models\TelegraphChat;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
+
 
 class User extends Authenticatable
 {
     use HasFactory;
 
     protected $fillable = [
-        'firstName',
-        'lastName',
-        'telegram_user_id',
-        'chat_id',
-        'language_code',
-        'access_token',
-        'target'
     ];
+
+    public function chat()
+    {
+        return $this->belongsTo(TelegraphChat::class, 'telegraph_chat_id', 'id');
+    }
+
+    public function subscriptions(): HasMany
+    {
+        return $this->hasMany(Subscription::class);
+    }
 }

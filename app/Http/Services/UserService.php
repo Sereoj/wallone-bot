@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class UserService
 {
+    protected static string $telegram_id = 'telegram_id';
     /**
      * @param $telegram_user_id
      * @return bool
@@ -15,7 +16,7 @@ class UserService
     public static function exists($telegram_user_id) : bool
     {
         return User::query()
-            ->where('telegram_user_id',$telegram_user_id)
+            ->where(self::$telegram_id,$telegram_user_id)
             ->exists();
     }
 
@@ -23,10 +24,10 @@ class UserService
      * @param $telegramId
      * @return Builder|Model|object|null
      */
-    public function getUserByTelegramId($telegram_user_id)
+    public static function getUserByTelegramId($telegram_user_id)
     {
         return User::query()
-            ->where('telegram_user_id', $telegram_user_id)
+            ->where(self::$telegram_id, $telegram_user_id)
             ->first();
     }
 

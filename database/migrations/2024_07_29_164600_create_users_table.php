@@ -1,5 +1,6 @@
 <?php
 
+use DefStudio\Telegraph\Models\TelegraphChat;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -16,9 +17,10 @@ return new class extends Migration
 
             $table->string('firstName')->comment('firstName');
             $table->string('lastName')->comment('lastName');
-            $table->string('telegram_user_id')->comment('Account ID от тг');
-            $table->string('chat_id')->comment('Chat ID от тг');
-
+            $table->string('telegram_id')->comment('Account ID от тг');
+            $table->boolean('status')->default(true)->nullable();
+            $table->foreignIdFor(TelegraphChat::class)
+                ->constrained()->cascadeOnUpdate()->cascadeOnDelete();
             $table->string('language_code');
             $table->string('access_token');
             $table->string('target');

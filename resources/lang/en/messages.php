@@ -1,26 +1,28 @@
 <?php
 
 return [
-    "developer" => "The bot is under development. Do not block the bot and do not stop it. We will inform you about the launch of the bot. Sincerely, the Wallone administration. ❤",
-    "about" => "In the meantime, you can apply to our telegram group, where we are holding a gift contest, have time to be the first ❤",
-    "subscribe" => "Subscribe",
-    "visit" => "Visit our website",
-    "start"=> "Please select the desired language to work with the bot. Thanks ;)",
-    "welcome"=> "Hello, I'm Lona! I am very cute and pretty, I will notify you about the purchased images by users, as well as help you with many questions ;)",
+    "welcome" => "Приветик, я знаю, ты мой друг - отличный художник, талантливый, и творческий. И я помогу тебе вырасти в карьерном росте, спросишь меня как?",
+    "welcome.step1" => "Да, просто! Я - это целая платформа, где ты можешь публиковать свои рисунки, арты, иллюстрации и многое другое на тему Аниме.",
+    "welcome.step2" => "Мы создадим с тобой целое комьюнити, в котором ты отличишься и покажешь своё мастерство, наберешься опыта, а главное, сможешь заработать.",
     "continue" => "Continue",
-    "auth"=> "So, let's log in with you to use your personal account.\nClick on the link and copy the data in the user=>key format\n\nAnd send a message in the format:\n `/auth user:key`\n\nAttention beware of scammers, be sure to check the address of the bot [@wallone_bot](@wallone_bot)\n\nIn no case, do not show or give the key to third parties.",
-    "auth.check"=> "Check",
-    "auth.true"=> "The user is logged in",
-    "subs_group"=> "💬 [Subscribe to our channel](https://t.me/+7tPe2NSr66AyNzM6),to keep up to date with new updates and other news related to [Wallone](https://wallone.app).",
-    "subs_group.sub"=> "Subscribe to the channel",
-    "subs_group.check"=> "Check",
-    "for_new_users"=> "I have prepared a gift for you, click \"pick up\"",
-    "account"=> "Welcome, ***username*** 🌟! You are here again to shine your light and delight us with your smiles.\n\n[Profile](https://link.app/users/username )\n├ Username: ***username***\n├ Tariff: Lite\n├ Role: User\n└ Balance: 100 tokens\n\n🏞 Posts:\n├ Total: ***109*** \n├ Published: ***100*** \n├ On moderation: ***9*** \n└ Rejected: ***0*** \n\n📋 Useful:\n├ [@wallone_news](@wallone_news)\n├ [@wallone_channel](@wallone_channel)\n├ [VK Group](https://vk.com/wallone_group)\n├ [Help Department](https://wallone.app/help)\n└ [Publication rules](https://wallone.app/rules)",
-    "account.popular_images"=> "Popular Images",
-    "account.recently_purchased_images"=> "Recently purchased images",
-    "greeting"=> "Hello!",
-    "language"=> "Select a language=>",
+
+    "sub.step1" => "Я уверена, что убедила тебя! Помоги мне вырасти. Пожалуйста, подпишись на наше сообщество, чтобы быть в курсе новостей нашей маленькой вселенной.",
+    "social.vk" => "Вконтакте",
+    "social.youtube" => "Youtube",
+    "social.tiktok" => "TikTok",
+    "social.telegram" => "telegram",
+    "social.discord" => "Discord",
+
+    "sub.step2"=>"Итак, наверное ты уже подписался на наши сообщества, жми Проверить подписку",
+    "sub.check"=>"Проверить",
+
+    "register" => "Умничка! Ну что же, приступим. Зарегистрируйся [на сайте](https://wallone.app/) введя свой предпочитаемый никнейм, а также придумай пароль, а главное загрузи смешную или позитивную аватарку.",
+    "register.step1" => "Ведь главное в нашем творчестве - это энтузиазм, это вдохновение к превосходному с позитивным настроем! Не пугайся,это займет не более 1 минуты",
+    "visit" => "Регистрация",
+
+    "verify" => "Наверное ты уже прошел регистрацию. Напиши свой Email, чтобы я убедилась в твоем существовании в этом прекрасном мире и подтвердила твою личность.",
+    "verify.step1" => "Я рада, что нашла верного друга! Давай опубликуем [свою первую рисовку](https://wallone.app/profile/post/create), среди других творителей искусств. Я уверена, твой рисунок наберет популярность на нашей платформе.
+    [Загрузи своё первое чудо](https://wallone.app/profile/post/create)",
     "language.english"=> "English",
     "language.russia"=> "Русский",
-    "choice"=> "Your choice has been received!"
 ];

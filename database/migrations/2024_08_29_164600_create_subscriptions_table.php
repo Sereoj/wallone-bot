@@ -6,21 +6,19 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-
-
     /**
      * Run the migrations.
      */
     public function up(): void
     {
-        Schema::create('posts', function (Blueprint $table) {
+        Schema::create('subscriptions', function (Blueprint $table) {
             $table->id();
-            $table->string('slug');
-            $table->json('title');
-            $table->json('content');
-            $table->foreignId('user_id')->constrained('users')
+            $table->foreignIdFor(\App\Models\User::class)
+                ->constrained()
                 ->cascadeOnUpdate()
                 ->cascadeOnDelete();
+            $table->dateTime('expire_at', $precision = 0);
+            $table->boolean('status')->default(true);
             $table->timestamps();
         });
     }
@@ -30,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('posts');
+        Schema::dropIfExists('subscriptions');
     }
 };
