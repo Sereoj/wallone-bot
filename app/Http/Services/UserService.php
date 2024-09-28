@@ -21,10 +21,10 @@ class UserService
     }
 
     /**
-     * @param $telegramId
+     * @param int $telegramId
      * @return Builder|Model|object|null
      */
-    public static function getUserByTelegramId($telegram_user_id)
+    public static function getUserByTelegramId(int $telegram_user_id)
     {
         return User::query()
             ->where(self::$telegram_id, $telegram_user_id)
