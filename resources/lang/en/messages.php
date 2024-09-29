@@ -1,28 +1,27 @@
 <?php
 
 return [
-    "welcome" => "Приветик, я знаю, ты мой друг - отличный художник, талантливый, и творческий. И я помогу тебе вырасти в карьерном росте, спросишь меня как?",
-    "welcome.step1" => "Да, просто! Я - это целая платформа, где ты можешь публиковать свои рисунки, арты, иллюстрации и многое другое на тему Аниме.",
-    "welcome.step2" => "Мы создадим с тобой целое комьюнити, в котором ты отличишься и покажешь своё мастерство, наберешься опыта, а главное, сможешь заработать.",
+    "welcome" => "Hi, I know you're my friend - a great artist, talented, and creative. And I will help you grow in your career, will you ask me how?",
+    "welcome.step1" => "Yes, it's simple! I am a whole platform where you can publish your drawings, art, illustrations and much more on the Anime theme.",
+    "welcome.step2" => "We will create a whole community with you, in which you will distinguish yourself and show your skills, gain experience, and most importantly, you will be able to earn.",
     "continue" => "Continue",
 
-    "sub.step1" => "Я уверена, что убедила тебя! Помоги мне вырасти. Пожалуйста, подпишись на наше сообщество, чтобы быть в курсе новостей нашей маленькой вселенной.",
-    "social.vk" => "Вконтакте",
+    "sub.step1" => "I'm sure I've convinced you! Help me grow up. Please subscribe to our community to keep up to date with the news of our little universe.",
+    "social.vk" => "VK",
     "social.youtube" => "Youtube",
     "social.tiktok" => "TikTok",
-    "social.telegram" => "telegram",
+    "social.telegram" => "Telegram",
     "social.discord" => "Discord",
+    "sub.step2"=>"So, you've probably already subscribed to our communities, click «Check» subscription.",
+    "sub.check"=>"Check",
 
-    "sub.step2"=>"Итак, наверное ты уже подписался на наши сообщества, жми Проверить подписку",
-    "sub.check"=>"Проверить",
+    "register" => "Clever girl! Well, let's get started. Register [on the site](https://wallone.app/) enter your preferred nickname, as well as come up with a password, and most importantly upload a funny or positive avatar.",
+    "register.step1" => "After all, the main thing in our work is enthusiasm, it is inspiration for excellent things with a positive attitude! Don't worry, it won't take more than 1 minute.",
+    "visit" => "Registration",
 
-    "register" => "Умничка! Ну что же, приступим. Зарегистрируйся [на сайте](https://wallone.app/) введя свой предпочитаемый никнейм, а также придумай пароль, а главное загрузи смешную или позитивную аватарку.",
-    "register.step1" => "Ведь главное в нашем творчестве - это энтузиазм, это вдохновение к превосходному с позитивным настроем! Не пугайся,это займет не более 1 минуты",
-    "visit" => "Регистрация",
-
-    "verify" => "Наверное ты уже прошел регистрацию. Напиши свой Email, чтобы я убедилась в твоем существовании в этом прекрасном мире и подтвердила твою личность.",
-    "verify.step1" => "Я рада, что нашла верного друга! Давай опубликуем [свою первую рисовку](https://wallone.app/profile/post/create), среди других творителей искусств. Я уверена, твой рисунок наберет популярность на нашей платформе.
-    [Загрузи своё первое чудо](https://wallone.app/profile/post/create)",
+    "verify" => "You must have already registered. Write your Email so that I can verify your existence in this wonderful world and confirm your identity.",
+    "verify.step1" => "I'm glad I found a loyal friend! Let's publish [our first drawing](https://wallone.app/profile/post/create), among other art creators. I'm sure your drawing will gain popularity on our platform.
+    [Start right now](https://wallone.app/profile/post/create)",
     "language.english"=> "English",
     "language.russia"=> "Русский",
 ];

@@ -8,12 +8,12 @@ class LanguageService
 {
     /**
      * @param int $telegram_id
-     * @return bool
+     * @return string
      */
-    public function getLanguage(int $telegram_id): string
+    public static function getLanguage(int $telegram_id): string
     {
         return User::query()
-                ->where('telegram_user_id', $telegram_id)
-                ->first()->language_code || 'ru';
+                ->where('telegram_id', $telegram_id)
+                ->first()->language_code;
     }
 }

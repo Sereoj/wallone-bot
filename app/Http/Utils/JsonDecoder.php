@@ -12,16 +12,19 @@ class JsonDecoder
     public function __construct(string $jsonFilePath)
     {
         try {
-            if (!Storage::exists($jsonFilePath)) {
-                LoggerService::info("Файл JSON не найден: $jsonFilePath");
+            $path = Storage::path($jsonFilePath);
+
+            if (!file_exists($path)) {
+                LoggerService::info("Файл JSON не найден: $path");
+            }else{
+                $jsonContent = file_get_contents($path);
+                $this->data = json_decode($jsonContent, true);
+
+                if (json_last_error() !== JSON_ERROR_NONE) {
+                    LoggerService::info('Ошибка при декодировании JSON: ' . json_last_error_msg());
+                }
             }
 
-            $jsonContent = file_get_contents($jsonFilePath);
-            $this->data = json_decode($jsonContent, true);
-
-            if (json_last_error() !== JSON_ERROR_NONE) {
-                LoggerService::info('Ошибка при декодировании JSON: ' . json_last_error_msg());
-            }
         }catch (Exception $exception)
         {
             LoggerService::debug($exception);
@@ -46,6 +49,11 @@ class JsonDecoder
     public function getChannel(string $key): ?string
     {
         return $this->data['channels'][$key] ?? null;
+    }
+
+    public function getImages(string $key): ?string
+    {
+        return $this->data['images'][$key] ?? null;
     }
 
     public function getTelegramChat(string $language): ?string

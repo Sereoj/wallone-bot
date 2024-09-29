@@ -2,25 +2,21 @@
 
 namespace App\Http\Telegraph;
 
+use App\Http\Services\LanguageService;
 use App\Http\Services\LoggerService;
+use App\Http\Services\MessageService;
 use App\Http\Services\SubscriptionService;
 use App\Http\Services\UserService;
-
 use App\Http\Utils\JsonDecoder;
-use DefStudio\Telegraph\Facades\Telegraph;
 use DefStudio\Telegraph\Handlers\WebhookHandler;
 use DefStudio\Telegraph\Keyboard\Button;
 use DefStudio\Telegraph\Keyboard\Keyboard;
-
 use DefStudio\Telegraph\Models\TelegraphBot;
 use DefStudio\Telegraph\Models\TelegraphChat;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Storage;
 
 class MainWebhookHandler extends WebhookHandler
 {
-    //@wallone_bot
     protected TelegraphBot $botModel;
     protected TelegraphChat $chatModel;
     protected string $language_code;
@@ -28,47 +24,47 @@ class MainWebhookHandler extends WebhookHandler
     protected int $userId;
     protected Request $request;
     protected SubscriptionService $subscriptionService;
+    private MessageService $messageService;
     protected JsonDecoder $jsonDecoder;
-
-    protected string $path = "app/config.json";
+    protected string $path = "config.json";
 
     public function __construct()
     {
         parent::__construct();
     }
 
-    protected function getPath() : string
+    protected function getSiteUTM(int $accountId): string
     {
-        return $this->path ?? 'app/config.json';
+        $channels = $this->jsonDecoder;
+        $site = $channels->getChannel('site');
+        return $site && $accountId ? "$site/connect?s=tg&id=$accountId" : 'https://wallone.app';
     }
+
+    protected function getPath(): string
+    {
+        return $this->path;
+    }
+
+    public function getImagePath($config, $name): string
+    {
+        if(file_exists($config->getImages($name)))
+        {
+            return storage_path($config->getImages($name));
+        }
+        return storage_path($config->getImages("default"));
+    }
+
     protected function setupChat(): void
     {
         LoggerService::info("Запускаю setupChat");
 
-        $jsonFilePath = storage_path($this->path);
-        $this->jsonDecoder = new JsonDecoder($jsonFilePath);
+        $this->jsonDecoder = new JsonDecoder($this->getPath());
 
         try {
-
-            if(isset($this->message))
-            {
-                $language = $this->language_code = $this->message->from()?->languageCode();
-                App::setLocale($language);
-                LoggerService::info("Установка languageCode: $language");
-            }
-
-
-            if (isset($this->message)) {
-                $this->userId = $this->message->from()->id();
-                LoggerService::info("Установка userId: $this->userId");
-            }
-
-            if (isset($this->bot)) {
-                $this->botModel = $this->bot;
-                $this->subscriptionService = new SubscriptionService($this->botModel);
-                LoggerService::info("Установка botModel: $this->bot");
-            }
-
+            $this->setUserId();
+            $this->setLanguageCode();
+            $this->messageService = new MessageService($this->language_code);
+            $this->setBotModel();
         } catch (\Exception $exception) {
             LoggerService::info($exception->getMessage());
         }
@@ -76,109 +72,142 @@ class MainWebhookHandler extends WebhookHandler
         parent::setupChat();
     }
 
-    public function id(): void
+    private function setUserId(): void
     {
-        $this->chat->html("Chat ID: {$this->chat->chat_id}")->send();
+        $this->userId = $this->message?->from()->id() ?? $this->callbackQuery?->message()?->chat()->id();
+        LoggerService::info("Установка userId: $this->userId");
+    }
+
+    private function setLanguageCode(): void
+    {
+        $this->language_code = $this->message?->from()?->languageCode() ?? LanguageService::getLanguage($this->userId);
+        LoggerService::info("Установка languageCode: $this->language_code");
+        App()->setLocale($this->language_code);
+    }
+
+    private function setBotModel(): void
+    {
+        if (isset($this->bot)) {
+            $this->botModel = $this->bot;
+            $this->subscriptionService = new SubscriptionService($this->botModel);
+            LoggerService::info("Установка botModel: $this->bot");
+        }
     }
 
     public function start()
     {
         LoggerService::info("Запускаю start");
 
-        if (isset($this->chat)) {
-            $this->chatModel = $this->chat;
-            LoggerService::info("Установка chat: $this->chat");
-        }
+        $config = $this->jsonDecoder;
+        $this->chatModel = $this->chat;
+        $this->setTelegramChatId();
+        $this->registerUser();
 
-        if (isset($this->chat)) {
-            $this->telegramChatId = $this->chat->chat_id;
-            LoggerService::info("Установка telegramChatID: $this->telegramChatId");
-        } else {
-            LoggerService::info("Не удалось получить свойство telegramChatId");
-        }
-
-        $text = explode(" ", $this->message->text());
-        $from = $this->message->from();
-
-        $telegram_user_id = $from->id();
-
-        //Если пользователя нет, то создаём
-        if(!UserService::exists($telegram_user_id)){
-            UserService::create([
-                'firstName' => $from->firstName(),
-                'lastName'=> $from->lastName(),
-                'telegram_id' => $telegram_user_id,
-                'telegraph_chat_id' => $this->chat->id,
-                'access_token' => '',
-                'language_code' => $this->language_code,
-                'target' => $text[1] ?? 'telegram_target'
-            ]);
-            LoggerService::info("Добавляю пользователя {$from->username()} в базу данных");
-        }
-        $this->chat
-            ->photo(storage_path('app/public/3f736a9b07572e63c1395d87232873cc.jpg'))
-            ->message(__('messages.welcome'))
+        $this->chat->photo($this->getImagePath($config, "start"))
+            ->message($this->messageService->message('welcome'))
             ->send();
 
-        $this->chat
-            ->message(__('messages.welcome.step1'))
-            ->send();
+        $this->chat->message($this->messageService->message('welcome.step1'))->send();
 
         $this->messageId = $this->chat
-            ->message(__('messages.welcome.step2'))
+            ->message($this->messageService->message('welcome.step2'))
             ->keyboard(Keyboard::make()->buttons([
-                Button::make(__('messages.continue'))
+                Button::make($this->messageService->message('continue'))
                     ->action("continue")
                     ->param('id', "continue")
             ]))->send()->telegraphMessageId();
     }
 
+    private function setTelegramChatId(): void
+    {
+        $this->telegramChatId = $this->message->chat()->id() ?? $this->callbackQuery?->message()?->chat()->id();
+        LoggerService::info("Установка telegramChatID: $this->telegramChatId");
+    }
+
+    private function registerUser(): void
+    {
+        $from = $this->message->from();
+        $telegram_user_id = $from->id();
+
+        if (!UserService::exists($telegram_user_id)) {
+            UserService::create([
+                'firstName' => $from->firstName(),
+                'lastName' => $from->lastName(),
+                'telegram_id' => $telegram_user_id,
+                'telegraph_chat_id' => $this->chat->id,
+                'access_token' => '',
+                'language_code' => $this->language_code,
+                'target' => explode(" ", $this->message->text())[1] ?? 'telegram_target'
+            ]);
+            LoggerService::info("Добавляю пользователя {$from->username()} в базу данных");
+        }
+    }
+
     public function continue()
     {
         $action = $this->data->get('id');
-        $channels = $this->jsonDecoder;
+        $config = $this->jsonDecoder;
+        $buttons = $this->createSocialButtons($config);
 
-        $buttons = Keyboard::make()->buttons([
+        switch ($action) {
+            case "continue":
+                $this->sendSubscriptionSteps($this->getImagePath($config, 'continue'), $buttons);
+                break;
+            case "check":
+                $this->checkSubscriptionAndSendResponse($this->getImagePath($config, 'check'));
+                break;
+            case "verify":
+                break;
+        }
+    }
+
+    private function createSocialButtons(JsonDecoder $channels): Keyboard
+    {
+        return Keyboard::make()->buttons([
             Button::make(__('messages.social.youtube'))->url($channels->getChannel('youtube')),
             Button::make(__('messages.social.tiktok'))->url($channels->getChannel('tiktok')),
             Button::make(__('messages.social.telegram'))->url($channels->getChannel('telegram')),
             Button::make(__('messages.social.vk'))->url($channels->getChannel('vk')),
         ]);
+    }
 
-        $imagePath = storage_path('app/public/3f736a9b07572e63c1395d87232873cc.jpg');
+    private function sendSubscriptionSteps(string $imagePath, Keyboard $buttons): void
+    {
+        $this->chat->photo($imagePath)
+            ->message($this->messageService->message('sub.step1'))
+            ->keyboard($buttons)
+            ->send();
 
-        switch ($action)
-        {
-            case "continue":
-                $this->chat
-                    ->photo($imagePath)
-                    ->message(__('messages.sub.step1'))
-                    ->keyboard($buttons)
-                    ->send();
+        $this->chat->message($this->messageService->message('sub.step2'))
+            ->keyboard(Keyboard::make()
+                ->button($this->messageService->message('sub.check'))
+                ->action('continue')->param('id', "check"))
+            ->send();
+    }
 
-                $this->chat
-                    ->message(__('messages.sub.step2'))
-                    ->keyboard(Keyboard::make()
-                    ->button(__('messages.sub.check'))
-                        ->action('continue')->param('id', "check")
-                    )->send();
-                break;
-            case "check":
-                if($this->subscriptionService->checkSubscription(getenv('TG_CHANNEL_URL'), $this->chat->chat_id)){
-                    $this->chat
-                        ->photo($imagePath)
-                        ->message(__('messages.register'))
-                        ->send();
+    private function checkSubscriptionAndSendResponse(string $imagePath): void
+    {
+        if ($this->subscriptionService->checkSubscription(getenv('TG_CHANNEL_URL'), $this->userId)) {
+            $this->chat->photo($imagePath)
+                ->message($this->messageService->message('register'))
+                ->send();
 
-                    $this->chat
-                        ->message(__('messages.register.step1'))
-                        ->keyboard(Keyboard::make()->buttons([
-                            Button::make(__('messages.visit'))->url($channels->getChannel('site')),
-                        ]))
-                        ->send();
-                }
-                break;
+            $this->chat->message($this->messageService->message('register.step1'))
+                ->keyboard(Keyboard::make()->buttons([
+                    Button::make($this->messageService->message('visit'))
+                        ->url($this->getSiteUTM($this->userId)),
+                ]))->send();
+            $this->sendVerify();
         }
     }
 
+    private function sendVerify()
+    {
+        $this->chat
+            ->message($this->messageService->message('verify'))
+            ->keyboard(Keyboard::make()
+                ->button($this->messageService->message('sub.check'))
+                ->action('continue')->param('id', "verify"))
+            ->send();
+    }
 }
