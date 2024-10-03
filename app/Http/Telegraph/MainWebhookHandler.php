@@ -47,11 +47,7 @@ class MainWebhookHandler extends WebhookHandler
 
     public function getImagePath($config, $name): string
     {
-        if(file_exists($config->getImages($name)))
-        {
-            return storage_path($config->getImages($name));
-        }
-        return storage_path($config->getImages("default"));
+        return storage_path($config->getImages($name));
     }
 
     protected function setupChat(): void

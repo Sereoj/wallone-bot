@@ -38,6 +38,10 @@ class MessageService
                 return __('messages.register.step1', locale: $this->language);
             case "visit":
                 return __('messages.visit', locale: $this->language);
+            case "verify":
+                return __('messages.verify', locale: $this->language);
+            case "verify.step1":
+                return __('messages.verify.step1', locale: $this->language);
             default:
                 return 'not found';
         }
